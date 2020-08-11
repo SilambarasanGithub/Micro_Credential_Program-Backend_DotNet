@@ -1,0 +1,62 @@
+{
+  "ReRoutes": [
+    {
+      "DownstreamPathTemplate": "/api/v1/user",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "44312"
+        }
+      ],
+      "UpstreamPathTemplate": "/getUser"
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/user/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "44312"
+        }
+      ],
+      "UpstreamPathTemplate": "/getUser/{id}",
+      "Key": "User"
+    },
+    {
+      "DownstreamPathTemplate": "/api/appointment",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "44348"
+        }
+      ],
+      "UpstreamPathTemplate": "/getAppointment"
+    },
+    {
+      "DownstreamPathTemplate": "/api/appointment/GetAppointmentsByUserId/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "44348"
+        }
+      ],
+      "UpstreamPathTemplate": "/GetAppointmentsByUserId/{id}",
+      "Key": "Appointment"
+    }
+  ],
+  "Aggregates": [
+    {
+      "ReRouteKeys": [
+        "User",
+        "Appointment"
+      ],
+      "UpstreamPathTemplate": "/UserAppointments/{id}"
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:44326/"
+  }
+}

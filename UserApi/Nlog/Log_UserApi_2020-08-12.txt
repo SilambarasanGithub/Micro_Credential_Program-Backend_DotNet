@@ -1,0 +1,8 @@
+2020-08-12 10:20:23.3883 | INFO | Try getting users list
+2020-08-12 10:20:32.4263 | INFO | Try getting user by id
+2020-08-12 10:22:26.2788 | INFO | Try getting user by id
+2020-08-12 10:23:04.5791 | INFO | Try updating user
+2020-08-12 10:23:04.6910 | INFO | User updated successfully
+2020-08-12 10:23:34.8656 | INFO | Try updating user
+2020-08-12 10:24:03.6175 | INFO | Try updating user
+2020-08-12 10:24:03.7958 | INFO | User updated successfully

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -11,7 +12,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NLog;
 using UserApi.Data.EFCore;
+using UserApi.Nlog;
 
 namespace UserApi
 {
@@ -19,6 +22,7 @@ namespace UserApi
     {
         public Startup(IConfiguration configuration)
         {
+            LogManager.LoadConfiguration(Directory.GetCurrentDirectory() + @"\NLog\nlog.config");
             Configuration = configuration;
         }
 
@@ -30,6 +34,7 @@ namespace UserApi
             services.AddDbContext<UserDBContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DBConnection")));
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddSingleton<ILog, LoggerService>();
             services.AddControllers();
 
             // API Versioning

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using UserApi.Data.EFCore;
 using Microsoft.AspNetCore.Http;
 using UserApi.Model;
+using UserApi.Nlog;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,21 +18,25 @@ namespace UserApi.Controllers
     //[Route("[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
-        public UserController(IUserRepository userRepository)
+        private ILog logger;
+        private readonly IUserRepository userRepository;
+        public UserController(IUserRepository _userRepository, ILog _log)
         {
-            _userRepository = userRepository;
+            userRepository = _userRepository;
+            logger = _log;
         }
         // GET: api/<UserController>
         [HttpGet]
         public async Task<ActionResult> Get()
         {
+            logger.Informatiom("Try getting users list");
             try
             {
-                return Ok(await _userRepository.GetUsers());
+                return Ok(await userRepository.GetUsers());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.Error("Error getting users list : " + ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error retrieving data from the database");
             }
         }
@@ -40,12 +45,14 @@ namespace UserApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult> Get(int id)
         {
+            logger.Informatiom("Try getting user by id");
             try
             {
-                return Ok(await _userRepository.GetUser(id));
+                return Ok(await userRepository.GetUser(id));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.Error("Error getting user by id : " + ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error retrieving data from the database");
             }
         }
@@ -54,17 +61,20 @@ namespace UserApi.Controllers
         [HttpPost]
         public async Task<ActionResult> Post(User user)
         {
+            logger.Informatiom("Try addming new user");
             try
             {
                 if (user == null)
                     return BadRequest();
 
-                var newUser = await _userRepository.AddUser(user);
+                var newUser = await userRepository.AddUser(user);
 
+                logger.Informatiom("User added successfully");
                 return StatusCode(StatusCodes.Status201Created, newUser);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.Error("Calling GetUsers : " + ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error creating new user record");
             }
         }
@@ -73,19 +83,22 @@ namespace UserApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<User>> Put(int id, User user)
         {
+            logger.Informatiom("Try updating user");
             try
             {
                 if (id != user.Id)
                     return BadRequest("Id mismatch");
 
-                var userToUpdate = await _userRepository.GetUser(id);
+                var userToUpdate = await userRepository.GetUser(id);
 
+                logger.Informatiom("User updated successfully");
                 // Throw expression
-                return userToUpdate == null ? throw new NullReferenceException() : StatusCode(StatusCodes.Status202Accepted, (await _userRepository.UpdateUser(user)));
+                return userToUpdate == null ? throw new NullReferenceException() : StatusCode(StatusCodes.Status202Accepted, (await userRepository.UpdateUser(user)));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error creating new user record");
+                logger.Error("Error updating the user record : " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error updating the user record");
             }
         }
 
